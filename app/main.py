@@ -1,21 +1,46 @@
+
+
 from fastapi import FastAPI
 from openai import OpenAI
+from pydantic import BaseModel
+
+app = FastAPI(title="Log Analysis API", description="An API to analyze logs using Qwen2.5:3b model", version="1.0.0")
+
+client = OpenAI(base_url="http://localhost:11434/v1",
+                 api_key="ollama")
 
 
-app = FastAPI()
+class LogRequest(BaseModel):
+    logs: str
 
 @app.get("/")
 def read_root():
-    return {"Mesage":"Hello hackthur"}
+    return {"Message":"Hello hackthur"}
 
+# define a post endpoint to analyze the log using qwen2.5:3b
 
-def main():
-    client = OpenAI()
+@app.post("/analyze")
+def analyze_text(request: LogRequest):
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="qwen2.5:3b",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "Hello! How can I use the OpenAI API in my FastAPI application?"}
-        ]
+            {
+                "role": "system",
+                "content": (
+                    "Eres un ingeniero DevOps especializado en "
+                    "Kubernetes, Linux y troubleshooting. "
+                    "Analiza los logs proporcionados. "
+                    "Responde exclusivamente en español. "
+                    "Identifica errores, posibles causas y "
+                    "recomendaciones. No inventes evidencias."
+                )
+            },
+            {
+                "role": "user",
+                "content": request.logs
+            }
+        ],
+        temperature=0.2,
     )
-    print(response.choices[0].message.content)
+    return {"response": response.choices[0].message.content}
+
