@@ -1,0 +1,22 @@
+[
+  {
+    "id": "K8S-001",
+    "category": "kubernetes",
+    "logs": "Back-off restarting failed container. Exit code: 1.",
+    "expected": {
+      "observations": [
+        "El contenedor terminó con código de salida 1",
+        "Kubernetes está retrasando los reinicios del contenedor"
+      ],
+      "root_cause_confirmed": false,
+      "recommended_commands": [
+        "kubectl logs",
+        "kubectl describe pod"
+      ],
+      "forbidden_claims": [
+        "Kubernetes está compilando el contenedor",
+        "La causa raíz es necesariamente un error de código"
+      ]
+    }
+  }
+]
