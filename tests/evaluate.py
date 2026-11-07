@@ -2,8 +2,6 @@
 
 import json
 from pathlib import Path
-from pprint import pprint
-
 from urllib.error import HTTPError, URLError
 from urllib import request
 
@@ -49,7 +47,36 @@ def save_results_to_file(results: list[dict]) -> None:
     print(f"\n Results saved to: {results_path}")
 
 
+def evaluate_root_cause(diagnosis: str, expected: dict) -> dict:
+
+    root_cause_confirmed = expected["root_cause_confirmed"]
+
+    # Expressions that cause uncertainty
+    uncertainty_phrases = [
+        "no se puede determinar",
+        "no es posible determinar",
+        "no hay suficiente información",
+        "no se puede confirmar",
+        "se requiere más información",
+        "no hay evidencia suficiente"
+    ]
+
+    diagnosis_lower = diagnosis.lower()
+
+    expresses_uncertainty = any(
+        phrase in diagnosis_lower for phrase in uncertainty_phrases
+    )
+
+    return {
+        "root_cause_confirmed": root_cause_confirmed,
+        "expresses_uncertainty": expresses_uncertainty,
+        "uncertainty_check_passed": (expresses_uncertainty if not root_cause_confirmed else None)
+    }
+
+
+
 def main():
+
     results = []
     incidents = load_dataset()
     print(f"Loaded {len(incidents)} incidents from the dataset.")
@@ -64,11 +91,17 @@ def main():
             print("\nAI Diagnosis:")
             print("Diagnosis:", diagnosis)
 
+            evaluation = evaluate_root_cause(
+                diagnosis,
+                incident["expected"]
+            )
+
             results.append({
                 "incident_id": incident.get("id"),
                 "category": incident.get("category"),
                 "logs": incident.get("logs"),
-                "diagnosis": diagnosis
+                "diagnosis": diagnosis,
+                "evaluation": evaluation
             })
         except HTTPError as error:
             print(f"Error analyzing incident {incident.get('id')}: {error}")

@@ -1,8 +1,1 @@
-[
-    {
-        "incident_id": "K8S-001",
-        "category": "kubernetes",
-        "logs": "Back-off restarting failed container. Exit code: 1.",
-        "diagnosis": "ERROR DETECTADO:\nLa evidencia es que el contenedor ha fallado con un código de salida de 1 y está siendo reiniciado de manera back-off.\n\nPOSIBLES CAUSAS:\n1. Error en la ejecución de las instrucciones de la imagen Docker.\n2. Falta de recursos necesarios para ejecutar el contenedor.\n3. Problema de comunicación entre contenedores o con el host.\n4. Falta de permisos o problemas de acceso al sistema.\n\nRECOMENDACIONES:\n1. Verificar la imagen Docker para identificar si hay algún error en las instrucciones de Dockerfile.\n2. Comprobar los recursos asignados al contenedor y asegurarse de que están disponibles.\n3. Verificar la configuración de comunicación entre contenedores y el host.\n4. Revisar los permisos del contenedor y asegurarse de que no haya problemas de acceso.\n5. Si el error persiste, considerar la posibilidad de un problema de software específico del contenedor."
-    }
-]
+[]
