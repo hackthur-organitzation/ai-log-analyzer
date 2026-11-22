@@ -115,3 +115,15 @@ def test_detects_insufficient_evidence():
 
 # ==============
 
+
+
+def test_detects_alternative_uncertainty_expressions():
+    diagnosis = "Estos datos no permiten establecer el origen del fallo."
+    expected = {"root_cause_confirmed": False}
+
+    result = evaluate_root_cause(diagnosis, expected)
+
+    assert result["expresses_uncertainty"] is True
+    assert result["uncertainty_check_passed"] is True
+
+

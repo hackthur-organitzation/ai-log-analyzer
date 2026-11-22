@@ -58,7 +58,8 @@ def evaluate_root_cause(diagnosis: str, expected: dict) -> dict:
         "no hay suficiente información",
         "no se puede confirmar",
         "se requiere más información",
-        "no hay evidencia suficiente"
+        "no hay evidencia suficiente",
+        "estos datos no permiten establecer",
     ]
 
     diagnosis_lower = diagnosis.lower()
@@ -67,10 +68,41 @@ def evaluate_root_cause(diagnosis: str, expected: dict) -> dict:
         phrase in diagnosis_lower for phrase in uncertainty_phrases
     )
 
-    return {
+    return {      
         "root_cause_confirmed": root_cause_confirmed,
         "expresses_uncertainty": expresses_uncertainty,
         "uncertainty_check_passed": (expresses_uncertainty if not root_cause_confirmed else None)
+    }
+
+# Forbidden claims function to check if the diagnosis contains 
+# any forbidden claims from the expected dictionary.
+
+def evaluate_forbidden_claims(diagnosis: str, expected: dict) -> dict:
+
+    # expected = {
+    #     "forbidden_claims":[
+    #         "Kubernetes esta compilando el contenedor",
+    #         "La causa raiz es necesariamente un error de codigo"
+    #     ]
+    # }
+
+    matched_claims = list()
+
+
+    expected_values = expected.get("forbidden_claims", [])
+    diagnosis_lower = diagnosis.lower()
+
+    forbidden_claims_detected = any(
+        claim.lower() in diagnosis_lower for claim in expected_values)
+
+    for claim in expected_values:
+        if claim.lower() in diagnosis_lower:
+            matched_claims.append(claim)
+
+
+    return {
+        "matched_forbidden_claims": matched_claims,
+        "forbidden_claims_check_passed": len(matched_claims) == 0
     }
 
 
